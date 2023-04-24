@@ -1,7 +1,7 @@
 extern crate image;
-use image::{DynamicImage, GenericImage, GenericImageView, ImageBuffer, Rgb, Rgba};
+use image::{DynamicImage, GenericImage, GenericImageView, Rgba};
 use rand::Rng;
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf};
 
 fn generate_puzzle(image_path: &str) -> Result<(String, String, u32), Box<dyn std::error::Error>> {
     // Load the input image and get its dimensions.
@@ -49,7 +49,7 @@ fn generate_puzzle(image_path: &str) -> Result<(String, String, u32), Box<dyn st
         .to_str()
         .unwrap()
         .to_owned();
-    let cropped_image_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+    let cropped_puzzle_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("test")
         .join("puzzle.png")
         .to_str()
@@ -57,11 +57,11 @@ fn generate_puzzle(image_path: &str) -> Result<(String, String, u32), Box<dyn st
         .to_owned();
 
     puzzle_piece.save(puzzle_piece_path.clone())?;
-    cropped_image.save(cropped_image_path.clone())?;
+    cropped_image.save(cropped_puzzle_path.clone())?;
     // Return the paths to the images and the coordinates of the solution.
     Ok((
         puzzle_piece_path.to_string(),
-        cropped_image_path.to_string(),
+        cropped_puzzle_path.to_string(),
         start_x,
     ))
 }
