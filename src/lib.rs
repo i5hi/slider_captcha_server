@@ -9,7 +9,7 @@ fn generate_puzzle(image_path: &str) -> Result<(String, String, u32), Box<dyn st
     let (width, height) = input_image.dimensions();
     println!("Original Image Dimensions: {:?}x{:?} px", width, height);
     // Define the size of the puzzle piece.
-    let piece_width = (width / 6) as u32;
+    let piece_width = (width / 3) as u32;
     let piece_height = (height / 3) as u32;
     println!("Puzzle Piece Dimensions: {:?}x{:?} px", piece_width, piece_height);
 
