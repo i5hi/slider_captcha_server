@@ -14,8 +14,10 @@ This implementation only contains a single function that generates the puzzle by
 
 # todo
 
-- text actix server generate - convert base64 images to png
-- test actix server verification
+- actix server puzzle generate must return the Y axis position
+- test actix server puzzle generate - convert base64 images to png
+- test actix server puzzle verification
+- better naming convention
 
 # Test
 
@@ -23,4 +25,16 @@ This implementation only contains a single function that generates the puzzle by
 cargo test -- --nocapture
 
 # check the test folder for image artifacts
+
+cargo run --example actix
+
+# will start the actix server example
+
+curl -X GET "localhost:18080/puzzle"
+
+# returns 2 images in base64 and a request_id
+
+curl -X GET "localhost:18080/verify?request_id=$request_id&solution=$solution"
+
+# solution must be a decimal % representing the x coordinate of the solution.
 ```
