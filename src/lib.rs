@@ -3,11 +3,12 @@ use image::{DynamicImage, GenericImage, GenericImageView, Rgba};
 use rand::Rng;
 // Import the slider captcha library
 
-// Define a struct to represent the global state
+#[derive(Debug)]
 pub struct SliderPuzzle{
     pub cropped_puzzle: DynamicImage,
     pub puzzle_piece: DynamicImage,
-    pub solution: f64,
+    pub x: f64,
+    pub y: f64,
 }
 
 pub fn generate_puzzle(image_path: &str) -> Result<SliderPuzzle, Box<dyn std::error::Error>> {
@@ -47,7 +48,8 @@ pub fn generate_puzzle(image_path: &str) -> Result<SliderPuzzle, Box<dyn std::er
     Ok(SliderPuzzle { 
         cropped_puzzle: cropped_image, 
         puzzle_piece: puzzle_piece, 
-        solution: (start_x as f64 / width as f64) 
+        y: (start_y as f64 / height as f64), 
+        x: (start_x as f64 / width as f64) 
     })
 }
 
@@ -77,5 +79,6 @@ mod tests {
             .to_owned();
         slider_puzzle.puzzle_piece.save(puzzle_piece_path.clone()).unwrap();
         slider_puzzle.cropped_puzzle.save(cropped_puzzle_path.clone()).unwrap();
+        println!("SOLUTION:\nx: {:?}\ny: {:?}\n",slider_puzzle.x, slider_puzzle.y);
     }
 }
