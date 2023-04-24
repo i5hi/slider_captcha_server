@@ -11,3 +11,11 @@ This implementation only contains a single function that generates the puzzle by
 - cropping out a piece of the image from the random coordinate
 - writes the piece.png and the cropped image to the test folder
 - returns the path of the images and the coordinates that represent the solution
+
+# Test
+
+```bash
+cargo test -- --nocapture
+
+# check the test folder for image artifacts
+```
