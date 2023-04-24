@@ -12,6 +12,11 @@ This implementation only contains a single function that generates the puzzle by
 - writes the piece.png and the cropped image to the test folder
 - returns the path of the images and the coordinates that represent the solution
 
+# todo
+
+- make generate_puzzle return DynamicImage rather than saving image to dist and returning the path
+- provide an example using actix web server
+
 # Test
 
 ```bash
