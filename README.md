@@ -14,6 +14,7 @@ This implementation only contains a single function that generates the puzzle by
 
 # todo
 
+- library verify function (currently verify logic is in the actix example)
 - actix server puzzle generate must return the Y axis position
 - test actix server puzzle generate - convert base64 images to png
 - test actix server puzzle verification
