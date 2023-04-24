@@ -80,5 +80,6 @@ mod tests {
         slider_puzzle.puzzle_piece.save(puzzle_piece_path.clone()).unwrap();
         slider_puzzle.cropped_puzzle.save(cropped_puzzle_path.clone()).unwrap();
         println!("SOLUTION:\nx: {:?}\ny: {:?}\n",slider_puzzle.x, slider_puzzle.y);
+        println!("Check images at:\n{:?}\n{:?}",cropped_puzzle_path,puzzle_piece_path);
     }
 }
