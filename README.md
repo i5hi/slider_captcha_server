@@ -14,8 +14,8 @@ This implementation only contains a single function that generates the puzzle by
 
 # todo
 
-- make generate_puzzle return DynamicImage rather than saving image to dist and returning the path
-- provide an example using actix web server
+- text actix server generate - convert base64 images to png
+- test actix server verification
 
 # Test
 
