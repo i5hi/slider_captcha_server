@@ -37,7 +37,6 @@ async fn generate_handler(state: web::Data<State>) -> impl Responder {
     let image_path = binding.to_str().unwrap();
     
     let slider_puzzle: SliderPuzzle = generate_puzzle(image_path).unwrap();
-
     // Generate a unique request ID and store the solution in the global state
     let request_id = uuid::Uuid::new_v4().to_string();
     let solution = slider_puzzle.x;
