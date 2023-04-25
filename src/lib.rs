@@ -53,6 +53,7 @@ pub fn generate_puzzle(image_path: &str) -> Result<SliderPuzzle, Box<dyn std::er
     })
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;

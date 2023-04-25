@@ -44,8 +44,21 @@ cargo test -- --nocapture
 ```bash
 cargo run --example actix
 # will start the actix server example on port 18080
+
 curl -X GET "localhost:18080/puzzle"
-# returns 2 images in base64 and a request_id
-curl -X POST "localhost:18080/puzzle/solution?request_id=$request_id&solution=$solution"
+
+# returns :
+# {
+#     "puzzle_image": String, // base64 encoded
+#     "piece_image": String, // base64 encoded
+#     "id": String,
+#     "y": f64,
+# }
+
+curl -X POST \
+    -H 'content-type: application/json' \
+    -d '{"id":"cfd47fd5-747c-4a64-8a74-43206aba8a21", "x":0.0239}' \
+    'localhost:18080/puzzle/solution'
+
 # solution must be a % as a decimal representing the x coordinate of the solution.
 ```
