@@ -2,21 +2,19 @@ use image::{DynamicImage, GenericImage, GenericImageView, Rgba};
 use rand::Rng;
 // Import the slider captcha library
 
-#[derive(Debug,Clone)]
-pub struct SliderPuzzle{
+#[derive(Debug, Clone)]
+pub struct SliderPuzzle {
     pub cropped_puzzle: image::DynamicImage,
-    pub puzzle_piece: image::DynamicImage, 
+    pub puzzle_piece: image::DynamicImage,
     pub x: f64,
     pub y: f64,
 }
 
 impl SliderPuzzle {
-    pub fn new(
-        image_path: &str,
-    ) -> Result<SliderPuzzle,String> {
-        let input_image = match image::open(image_path){
-            Ok(image)=>image,
-            Err(e)=> return Err(e.to_string())
+    pub fn new(image_path: &str) -> Result<SliderPuzzle, String> {
+        let input_image = match image::open(image_path) {
+            Ok(image) => image,
+            Err(e) => return Err(e.to_string()),
         };
         let (width, height) = input_image.dimensions();
         // Define the size of the puzzle piece.
@@ -26,7 +24,7 @@ impl SliderPuzzle {
         let mut rng = rand::thread_rng();
         let start_x = rng.gen_range(0..(width - piece_width));
         let start_y = rng.gen_range(piece_height..(2 * piece_height));
-        
+
         // Crop the puzzle piece out of the input image.
         let mut puzzle_piece = DynamicImage::new_rgb8(piece_width, piece_height);
         for y in 0..piece_height {
@@ -42,28 +40,40 @@ impl SliderPuzzle {
             for x in 0..width {
                 let pixel = input_image.get_pixel(x, y);
                 let mut rgba_pixel = Rgba([pixel[0], pixel[1], pixel[2], pixel[3]]);
-                if x >= start_x && x < start_x + piece_width && y >= start_y && y < start_y + piece_height {
+                if x >= start_x
+                    && x < start_x + piece_width
+                    && y >= start_y
+                    && y < start_y + piece_height
+                {
                     rgba_pixel[3] = 0;
                 }
                 cropped_image.put_pixel(x, y, rgba_pixel);
             }
         }
-    
-        Ok(SliderPuzzle { 
-            cropped_puzzle: cropped_image, 
-            puzzle_piece: puzzle_piece, 
-            y: (start_y as f64 / height as f64), 
-            x: (start_x as f64 / width as f64) 
+
+        Ok(SliderPuzzle {
+            cropped_puzzle: cropped_image,
+            puzzle_piece: puzzle_piece,
+            y: (start_y as f64 / height as f64),
+            x: (start_x as f64 / width as f64),
         })
-       
     }
-    pub fn update_x(&mut self, x: f64)->&mut SliderPuzzle{
+    pub fn update_x(&mut self, x: f64) -> &mut SliderPuzzle {
         self.x = x;
         self
     }
-    pub fn get_x(&self) -> f64 { self.x }
+    pub fn get_x(&self) -> f64 {
+        self.x
+    }
 }
-
+pub fn verify_puzzle(solution: f64, submission: f64, error_margin: f64) -> bool {
+    let check = (solution - submission).abs();
+    if check < error_margin {
+        return true;
+    } else {
+        return false;
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -88,19 +98,31 @@ mod tests {
             .to_str()
             .unwrap()
             .to_owned();
-        slider_puzzle.puzzle_piece.save(puzzle_piece_path.clone()).unwrap();
-        slider_puzzle.cropped_puzzle.save(cropped_puzzle_path.clone()).unwrap();
-        println!("SOLUTION:\nx: {:?}\ny: {:?}\n",slider_puzzle.x, slider_puzzle.y);
-        println!("Check images at:\n{:?}\n{:?}",cropped_puzzle_path,puzzle_piece_path);
+        slider_puzzle
+            .puzzle_piece
+            .save(puzzle_piece_path.clone())
+            .unwrap();
+        slider_puzzle
+            .cropped_puzzle
+            .save(cropped_puzzle_path.clone())
+            .unwrap();
+        println!(
+            "SOLUTION:\nx: {:?}\ny: {:?}\n",
+            slider_puzzle.x, slider_puzzle.y
+        );
+        println!(
+            "Check images at:\n{:?}\n{:?}",
+            cropped_puzzle_path, puzzle_piece_path
+        );
     }
     #[test]
-    fn playground(){
+    fn playground() {
         let x: u32 = 100;
         let y: f32 = 1.23;
 
         let z: f32 = x as f32 + y;
-        println!("{}",z);
+        println!("{}", z);
 
-        assert!(z == 101.23) 
+        assert!(z == 101.23)
     }
 }
