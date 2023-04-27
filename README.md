@@ -6,11 +6,20 @@ a slider captcha puzzle creation and verification library to pretect http apis
 
 This implementation only contains a single function that generates the puzzle by :
 
-- taking an image as input
+- taking a path to an image as input
 - selects a random coordinate from the image
 - cropping out a piece of the image from the random coordinate
-- writes the piece.png and the cropped image to the test folder
-- returns the path of the images and the coordinates that represent the solution
+- returns the following struct
+```rust
+pub struct SliderPuzzle{
+    pub cropped_puzzle: DynamicImage,
+    pub puzzle_piece: DynamicImage,
+    pub x: f64,
+    pub y: f64,
+}
+```
+- the client will get 2 DynamicImages and `y` as the starting point
+- `x` represents the solution
 
 ## todo
 

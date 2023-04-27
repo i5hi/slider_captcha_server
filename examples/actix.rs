@@ -1,17 +1,17 @@
 extern crate slider_captcha_server;
 use image::DynamicImage;
-use slider_captcha_server::{generate_puzzle, SliderPuzzle};
+use slider_captcha_server::{SliderPuzzle};
 
 use actix_web::{get,post, web::{self, Data}, App, HttpResponse, HttpServer, Responder};
-use serde::{Deserialize};
+use serde::{Serialize, Deserialize};
 use std::{collections::HashMap, path::PathBuf, sync::{Mutex, Arc}};
 use serde_json::json;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let app_state = State::default();
+    let mut app_state = State::default();
 
-    println!("\nStarting slider_captcha_server on port 18080...\n");
+    println!("\nStarted slider_captcha_server on port 18080.\n");
     HttpServer::new(move || {
         App::new()
             .data(app_state.clone())
@@ -30,20 +30,25 @@ async fn generate_handler(state: web::Data<State>) -> impl Responder {
     .join("archworkout.png");
     let image_path = binding.to_str().unwrap();
     
-    let slider_puzzle: SliderPuzzle = generate_puzzle(image_path).unwrap();
-    // Generate a unique request ID and store the solution in the global state
+    let slider_puzzle: SliderPuzzle = match SliderPuzzle::new(image_path){
+        Ok(puzzle)=>puzzle,
+        Err(err)=> {
+            print!("!!!BAD IMAGE PATH!!!! \n{}", err);
+            return HttpResponse::InternalServerError().body("Contact Admin.")
+        }
+    };
+    // // Generate a unique request ID and store the solution in the global state
     let request_id = uuid::Uuid::new_v4().to_string();
     let solution = slider_puzzle.x;
     state.solutions.lock().unwrap().insert(request_id.clone(), solution);
-    let solutions = state.solutions.lock().unwrap().clone();
-    println!("{:?}",solutions);
-    // Return a JSON object containing the request ID and the puzzle images
+
     let response = json!({
         "puzzle_image": image_to_base64(slider_puzzle.cropped_puzzle),
         "piece_image": image_to_base64(slider_puzzle.puzzle_piece),
         "id": request_id,
         "y": slider_puzzle.y,
     });
+
     println!("\nSOLUTION:\nid:{:?},\nx:{:?},y:{:?}",request_id, slider_puzzle.x, slider_puzzle.y);
     HttpResponse::Ok().json(response)
 }
@@ -51,18 +56,22 @@ async fn generate_handler(state: web::Data<State>) -> impl Responder {
 #[post("/puzzle/solution")]
 async fn verify_handler(state: Data<State>,solution: web::Json<Solution>) -> impl Responder {
     // Check if the solution matches the one stored in the global state
-    println!("{:?}",state.solutions.lock().unwrap().clone());
-    match state.solutions.lock().unwrap().get(&solution.id) {
+    let mut locked_state =  state.solutions.lock().unwrap();
+    println!("{:?}",locked_state.clone());
+    
+    let correct_solution = match locked_state.get(&solution.id) {
         Some(correct_solution) =>{
             println!("SOLUTION:\nRequestID:{:?}\nx:{:?}\n",solution.id,correct_solution);
-            if (*correct_solution - solution.x).abs() < 0.01 {
-                HttpResponse::Ok().body("VERIFIED!")
-            }
-            else{
-                HttpResponse::BadRequest().body("Incorrect solution")
-            }
+            correct_solution.clone()
         },
-        _ => HttpResponse::BadRequest().body("Invalid request ID"),
+        _ => return HttpResponse::BadRequest().body("Invalid request ID"),
+    };
+    locked_state.remove(&solution.id);
+    if (correct_solution - solution.x).abs() < 0.01 {
+        HttpResponse::Ok().body("VERIFIED!")
+    }
+    else{
+        HttpResponse::BadRequest().body("Incorrect solution")
     }
 }
 
@@ -80,7 +89,7 @@ impl Default for State {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct Solution {
     pub id: String,
     pub x: f64,
@@ -92,3 +101,4 @@ fn image_to_base64(image: DynamicImage) -> String {
         .unwrap();
     base64::encode(&buffer)
 }
+
