@@ -1,18 +1,10 @@
 extern crate slider_captcha_server;
-use actix_web::{
-    get, post,
-    web::{self, Data},
-    App, HttpResponse, HttpServer, Responder,
-};
+use actix_web::{get, post, web::{self, Data}, App, HttpResponse, HttpServer, Responder};
 use image::DynamicImage;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use slider_captcha_server::{verify_puzzle, SliderPuzzle};
-use std::{
-    collections::HashMap,
-    path::PathBuf,
-    sync::{Arc, Mutex},
-};
+use std::{collections::HashMap, path::PathBuf, sync::{Arc, Mutex}};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

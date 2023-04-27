@@ -66,6 +66,7 @@ impl SliderPuzzle {
         self.x
     }
 }
+
 pub fn verify_puzzle(solution: f64, submission: f64, error_margin: f64) -> bool {
     (solution - submission).abs() < error_margin
 }
@@ -101,14 +102,8 @@ mod tests {
             .cropped_puzzle
             .save(cropped_puzzle_path.clone())
             .unwrap();
-        println!(
-            "SOLUTION:\nx: {:?}\ny: {:?}\n",
-            slider_puzzle.x, slider_puzzle.y
-        );
-        println!(
-            "Check images at:\n{:?}\n{:?}",
-            cropped_puzzle_path, puzzle_piece_path
-        );
+        println!("SOLUTION:\nx: {:?}\ny: {:?}\n", slider_puzzle.x, slider_puzzle.y); 
+        println!("Check images at:\n{:?}\n{:?}", cropped_puzzle_path, puzzle_piece_path);
     }
     #[test]
     fn playground() {
