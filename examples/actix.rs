@@ -7,8 +7,7 @@ use actix_web::{
 use image::DynamicImage;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use slider_captcha_server::verify_puzzle;
-use slider_captcha_server::SliderPuzzle;
+use slider_captcha_server::{verify_puzzle, SliderPuzzle};
 use std::{
     collections::HashMap,
     path::PathBuf,
@@ -80,7 +79,7 @@ async fn verify_handler(state: Data<State>, solution: web::Json<Solution>) -> im
                 "SOLUTION:\nRequestID:{:?}\nx:{:?}\n",
                 solution.id, correct_solution
             );
-            correct_solution.clone()
+            *correct_solution
         }
         _ => return HttpResponse::BadRequest().body("Invalid request ID"),
     };

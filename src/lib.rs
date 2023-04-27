@@ -18,8 +18,8 @@ impl SliderPuzzle {
         };
         let (width, height) = input_image.dimensions();
         // Define the size of the puzzle piece.
-        let piece_width = (width / 5) as u32;
-        let piece_height = (height / 5) as u32;
+        let piece_width = width / 5;
+        let piece_height = height / 5;
         // Choose a random starting position for the puzzle piece.
         let mut rng = rand::thread_rng();
         let start_x = rng.gen_range(0..(width - piece_width));
@@ -53,7 +53,7 @@ impl SliderPuzzle {
 
         Ok(SliderPuzzle {
             cropped_puzzle: cropped_image,
-            puzzle_piece: puzzle_piece,
+            puzzle_piece,
             y: (start_y as f64 / height as f64),
             x: (start_x as f64 / width as f64),
         })
@@ -67,12 +67,7 @@ impl SliderPuzzle {
     }
 }
 pub fn verify_puzzle(solution: f64, submission: f64, error_margin: f64) -> bool {
-    let check = (solution - submission).abs();
-    if check < error_margin {
-        return true;
-    } else {
-        return false;
-    }
+    (solution - submission).abs() < error_margin
 }
 #[cfg(test)]
 mod tests {
